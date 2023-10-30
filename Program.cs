@@ -1,32 +1,80 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using System;
 
-
-public class Program
+class Program
 {
-    public static void Main()
+    // Driver Code
+    public static void Main(String[] args)
     {
-        var a = new []{ "()()()()", "()()(())", "()(()())", "()((()))", "()(())()", "(()()())", "(()(()))", "((()()))", "(((())))", "((())())", "(()())()", "((()))()", "(())()()" };
-        var b = new[] { "(((())))", "((()()))", "((())())", "((()))()", "(()(()))", "(()()())", "(()())()", "(())(())", "(())()()", "()((()))", "()(()())", "()(())()", "()()(())", "()()()()" };
-
-        //"()()()()","()()(())","()(()())","()((()))","()(())()","(()()())","(()(()))","((()()))","(((())))","((())())","(()())()","((()))()","(())()()" --out[ut
-
-        //"(((())))","((()()))","((())())","((()))()","(()(()))","(()()())","(()())()","(())(())","(())()()","()((()))","()(()())","()(())()","()()(())","()()()()" --expected
-        var r = GenerateParenthesis(5);
+        var test = new string[] { "eat", "tea", "tan", "ate", "nat", "bat" };
+        //"eat","tea","tan","ate","nat","bat"
+        //"eat", "tea", "tan", "ate", "nat", "bat"
+        var result = Solution.GroupAnagrams(test);
     }
 
-    public static IList<string> GenerateParenthesis(int n)
+
+}
+//IList<IList<string>> result = new List<IList<string>>();
+public class Solution
+{
+    public static IList<IList<string>> GroupAnagrams(string[] strs)
     {
-        if(n == 1)
+        IList<IList<string>> result = new List<IList<string>>();
+
+        foreach(var word in strs)
         {
-            return new string[] { "()" };
+            if(result.Count == 0)
+            {
+                result.Add(new List<string>() { word });
+                continue;
+            }
+
+            var isWordAdded = false;
+            foreach(var setOfAnagrams in result)
+            {
+                if(isAnagrams(setOfAnagrams[0], word))
+                {
+                    setOfAnagrams.Add(word);
+                    isWordAdded = true;
+                    break;
+
+                }
+            }
+
+            if (!isWordAdded)
+            {
+                result.Add(new List<string>() { word });
+            }
+
+
         }
-        else
+
+        return result;
+
+        static bool isAnagrams(string old, string current)
         {
-            var prev = GenerateParenthesis(n - 1);
-            var result = prev.Select(x => $"({x})")
-                             .Concat(prev.Select(x => $"(){x}"))
-                             .Concat(prev.Select(x => $"{x}()"));
-            return result.Distinct().ToList();
+            if(old.Length != current.Length)
+            {
+                return false;
+            }
+            if(old == current)
+            {
+                return true;
+            }
+            var len = old.Length;
+            for (int i = 0; i < len; i++)
+            {
+                if (old.Contains(current[i]))
+                {
+                    var index = old.IndexOf(current[i]);
+                    old = old.Remove(index, 1);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
